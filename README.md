@@ -52,7 +52,7 @@ This repository contains the code for a customized Retrieval-Augmented Generatio
 Please fork the repository and submit pull requests to the `main` branch. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 - OpenAI for providing the GPT-4.0 API
