@@ -9,8 +9,11 @@ from langchain.prompts import (
     ChatPromptTemplate,
 )
 
-def vectorstore_query():
-    pass
+class vectorstore_query:
+    def invoke():
+        pass
 
-def direct_trade_query():
-    pass
+
+class direct_trade_query:
+    def invoke():
+        pass

@@ -6,14 +6,15 @@ from langchain.agents import (
     AgentExecutor,
 )
 from langchain import hub
-from finbot_api.src.chains.financial_review_chain import (
+
+from chains.financial_review_chain import (
     vectorstore_query,
     direct_trade_query
 )
 
 FINANCIAL_AGENT_MODEL = "openai"
 
-financial_agent_prompt = "..."
+financial_agent_prompt = hub.pull("hwchase17/openai-functions-agent")
 
 tools = [
     Tool(
