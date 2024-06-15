@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  chatbot_api:
+    build:
+      context: ./finbot_api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+
+  chatbot_frontend:
+    build:
+      context: ./finbot_frontend
+    env_file:
+      - .env
+    depends_on:
+      - finbot_api
+    ports:
+      - "8501:8501"
