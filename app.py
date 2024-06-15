@@ -21,11 +21,11 @@ def initialize_session_state():
 
     if "generated" not in st.session_state:
         st.session_state["generated"] = [
-            "Hello This is FinBot! Feel free to ask me any questions."
+            "Hello this is FinBot! Your all in one Customisable Financial Assistant. Feel free to ask me any questions."
         ]
 
     if "past" not in st.session_state:
-        st.session_state["past"] = ["Hey! 👋"]
+        st.session_state["past"] = ["Hey! 👋 FinBot!"]
 
 
 def conversation_chat(query, chain, history):
@@ -99,57 +99,39 @@ def create_conversational_chain(vector_store):
     return chain
 
 
-def main():
-    initialize_session_state()
-    st.title("FinBot")
-    st.sidebar.title("Document Processing")
-    uploaded_files = st.sidebar.file_uploader(
-        "Upload Files",
-        accept_multiple_files=True
+@st.cache_resource
+def load_guideline_document():
+    pdf_path = "assets/guidelines/C029-IF-on-systems-and-controls-in-an-automated-trading-environment.pdf"
+    loader = PyPDFLoader(pdf_path)
+    text = loader.load()
+
+    text_splitter = CharacterTextSplitter(
+        separator="\n",
+        chunk_size=768,
+        chunk_overlap=128,
+        length_function=len
+    )
+    text_chunks = text_splitter.split_documents(text)
+
+    embedding = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"}
     )
 
-    if uploaded_files:
-        text = []
-        for file in uploaded_files:
-            file_extension = os.path.splitext(file.name)[1]
-            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                temp_file.write(file.read())
-                temp_file_path = temp_file.name
+    vector_store = Chroma.from_documents(
+        documents=text_chunks,
+        embedding=embedding,
+        persist_directory="chroma_store_guideline"
+    )
+    return vector_store
 
-            loader = None
-            if file_extension == ".pdf":
-                loader = PyPDFLoader(temp_file_path)
-            elif file_extension == ".docx" or file_extension == ".doc":
-                loader = Docx2txtLoader(temp_file_path)
-            elif file_extension == ".txt":
-                loader = TextLoader(temp_file_path)
 
-            if loader:
-                text.extend(loader.load())
-                os.remove(temp_file_path)
-
-        text_splitter = CharacterTextSplitter(
-            separator="\n",
-            chunk_size=768,
-            chunk_overlap=128,
-            length_function=len
-        )
-        text_chunks = text_splitter.split_documents(text)
-
-        embedding = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={"device": "cpu"}
-        )
-
-        vector_store = Chroma.from_documents(
-            documents=text_chunks,
-            embedding=embedding,
-            persist_directory="chroma_store_groq"
-        )
-
-        chain = create_conversational_chain(vector_store=vector_store)
-
-        display_chat_history(chain=chain)
+def main():
+    initialize_session_state()
+    st.title("📈FinBot")
+    guideline_vector_store = load_guideline_document()
+    chain = create_conversational_chain(vector_store=guideline_vector_store)
+    display_chat_history(chain=chain)
 
 
 if __name__ == "__main__":
