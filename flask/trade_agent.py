@@ -5,6 +5,7 @@ import os
 import yfinance as yf
 import numpy as np
 
+
 class GPTAssistant:
     """
     A class to interact with OpenAI's GPT APIs.
@@ -33,20 +34,20 @@ class GPTAssistant:
         self.assistant_prompt = {
             "role": "system",
             "content": """
-            You are a virtual assistant, you have a conversation with a user in natural language in order to help with Trading. The user is beginner to trading.
-            
-            The conversation for each query should consist of these steps:
-            1) Ask the user of what is their experience with trading, the risk they are willing to take today, and how much money they are willing to invest.
-            2) The user will provide the information.
-            3) Based on the information provided by the user, you will personalise your future responses to the user.
-            4) The user makes a query to buy or sell a stock.
-            5) You retrieve the price and volatility of the stock from an API and ask the user to confirm the transaction, adapting your response to their risk level, making sure to inform them if a volatility is not suitable for their risk level.
-            6) The user confirms the transaction.
-            7) You make the transaction and provide the user with the transaction details.
-            
-            Ensure that the generated responses are suitable for a voice chat bot.
-            Perform only one step at a time and never skip a step. Don't include the step number in your answers. Your answers should be concise.
-            """ + "To get financial data return this API: getdata.com/ with payload /{stock/: , date/: /}" + "To make a transaction return this API: transaction.com/ with payload /{stock/: , price/: /}"
+You are a virtual assistant, you have a conversation with a user in natural language in order to help with Trading. The user is a beginner to trading.
+
+The conversation for each query should consist of these steps:
+1) Ask the user of what is their experience with trading, the risk they are willing to take today, and how much money they are willing to invest.
+2) The user will provide the information.
+3) Based on the information provided by the user, you will personalise your future responses to the user.
+4) The user makes a query to buy or sell a stock.
+5) You retrieve the price and volatility of the stock from an API and ask the user to confirm the transaction, adapting your response to their risk level, making sure to inform them if a volatility is not suitable for their risk level, whilst also telling them the betas based on their level and explaining, and making sure you know how many shares the user wants to buy.
+6) The user confirms the transaction.
+7) You make the transaction and provide the user with the transaction details.
+
+Ensure that the generated responses are suitable for a voice chat bot.
+Perform only one step at a time and never skip a step. Don't include the step number in your answers. Your answers should be concise.
+""" + "To get financial data return this API: getdata.com/ with payload /{stock/: , date/: /}" + "To make a transaction return this API: transaction.com/ with payload /{stock/: , price/: /}"
         }
 
         self.tools = [
@@ -54,7 +55,7 @@ class GPTAssistant:
                 "type": "function",
                 "function": {
                     "name": "get_stock_info",
-                    "description": "Get the current stock price and volatility given the date",
+                    "description": "Get the current stock price and volatility given the date, and 5 year and 1 year betas.",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -186,8 +187,8 @@ class GPTAssistant:
 
         return response
 
-    # Example dummy function hard coded to return the price
-    # of a specific stock on a specific date
+    # Example dummy function hard coded to return the price 
+    # a specific stock on a specific date
     def get_stock_info(self, stock_name, date):
         try:
             """Get the current stock price and volatility in a given date"""
@@ -202,7 +203,20 @@ class GPTAssistant:
             volatility = volatility * np.sqrt(252)
             print(stock_name)
             print(volatility)
-            return f"The stock price is: {stock_price} and volatility is: {volatility} ."
+
+            def calculate_beta(stock_ticker, period, interval):
+                stock_data = yf.download(stock_ticker, period=period, interval=interval)
+                market_data = yf.download('^GSPC', period=period, interval=interval)
+                stock_returns = stock_data['Adj Close'].pct_change().dropna()
+                market_returns = market_data['Adj Close'].pct_change().dropna()
+                combined_data = stock_returns.to_frame('Stock').join(market_returns.to_frame('Market'), how='inner')
+                covariance_matrix = np.cov(combined_data['Stock'], combined_data['Market'])
+                beta = covariance_matrix[0, 1] / covariance_matrix[1, 1]
+                return beta
+            beta_st = calculate_beta(stock_name, "1y", "1d")
+            beta_lt = calculate_beta(stock_name, "5y", "1mo")
+
+            return f"The stock price is: {stock_price} and volatility is: {volatility} . The beta over 5 years was: {beta_lt} and over the past year: {beta_st} ."
         except:
             return("Stock data not found. Please try again.")
 
