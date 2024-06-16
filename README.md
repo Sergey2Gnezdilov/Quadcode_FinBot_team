@@ -32,20 +32,14 @@ This repository contains the code for a customized Retrieval-Augmented Generatio
    ```
 3. Install dependencies:
    ```
-   npm install  # If using Node.js
-   pip install -r requirements.txt  # If using Python
+   pip install -r requirements.txt 
    ```
 
 ### Running the Application
-1. Start the backend server:
+Start the backend server:
    ```
-   node server.js  # For Node.js
+   cd flask
    python app.py   # For Python Flask
-   ```
-2. Launch the frontend:
-   ```
-   cd frontend
-   npm start
    ```
 
 ## Contribution
