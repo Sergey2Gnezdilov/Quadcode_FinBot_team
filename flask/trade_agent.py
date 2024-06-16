@@ -17,7 +17,7 @@ class GPTAssistant:
     """
 
     def __init__(self, model="gpt-4o"):
-        api_key = "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"
+        api_key = ""
         self.client = OpenAI(api_key=api_key)
         self.default_model = model
         self.initialize_conversation()
