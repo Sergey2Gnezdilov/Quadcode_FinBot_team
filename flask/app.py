@@ -11,22 +11,22 @@ HTML_TEMPLATE = """
     <title>📈 FinBot</title>
     <style>
         body { 
-            font-family: Arial, sans-serif; 
+            font-family: 'Arial', sans-serif; 
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f9;
+            background-color: #121212; /* Dark background */
         }
         #chat-container {
             width: 80%;
             max-width: 600px;
             margin: auto;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #333; /* Darker border for dark mode */
+            background-color: #1e1e1e; /* Dark background for the chat container */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             height: 70vh;
@@ -35,48 +35,52 @@ HTML_TEMPLATE = """
         }
         #chat {
             flex-grow: 1;
-            padding: 20px;
+            padding: 10px; /* Reduced padding */
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
         .message {
-            padding: 10px 20px;
+            padding: 8px 15px; /* Slightly reduced padding */
             border-radius: 20px;
-            color: white;
+            color: white; /* White text color for dark mode */
             max-width: 70%;
+            word-wrap: break-word; /* Ensure text wraps in bubble */
         }
         .user {
-            background-color: #007bff;
+            background-color: #0a84ff; /* Bright color for user messages */
             align-self: flex-end;
         }
         .bot {
-            background-color: #333;
+            background-color: #333; /* Dark color for bot messages */
             align-self: flex-start;
         }
         #input-area {
-            border-top: 1px solid #ccc;
-            padding: 10px;
+            border-top: 1px solid #333;
+            padding: 8px; /* Reduced padding in the input area */
             display: flex;
         }
         #user_input {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 8px;
+            border: 1px solid #555; /* Darker border for input field */
             border-radius: 20px;
             outline: none;
+            background-color: #333; /* Dark input field */
+            color: white; /* White input text */
         }
         button {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            background-color: #007bff;
+            background-color: #0a84ff; /* Matching button color with user messages */
             color: white;
             border-radius: 20px;
             cursor: pointer;
+            margin-left: 10px; /* Add space between input and button */
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #0070d2;
         }
     </style>
 </head>
@@ -98,7 +102,7 @@ HTML_TEMPLATE = """
                 userDiv.textContent = input.value;
                 userDiv.className = 'message user';
                 chat.appendChild(userDiv);
-                chat.scrollTop = chat.scrollHeight;
+                chat.scrollTop = chat.scrollHeight; // Scroll to bottom
 
                 fetch('/', {
                     method: 'POST',
@@ -113,10 +117,10 @@ HTML_TEMPLATE = """
                     botDiv.textContent = data.response;
                     botDiv.className = 'message bot';
                     chat.appendChild(botDiv);
-                    chat.scrollTop = chat.scrollHeight; // Scroll to latest message
+                    chat.scrollTop = chat.scrollHeight; // Ensure new messages are seen
                 });
 
-                input.value = ''; // Clear input box after sending
+                input.value = ''; // Clear input after sending
             }
         }
     </script>
