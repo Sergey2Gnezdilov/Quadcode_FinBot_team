@@ -11,15 +11,14 @@ This repository contains the code for a customized Retrieval-Augmented Generatio
 
 ## Tech Stack
 - **Language Model**: OpenAI's GPT-4.0 API
-- **Vector Database**: Options include Quadrant or Datastax (to be finalized)
-- **Backend**: Node.js or Python Flask (to be decided)
-- **Frontend**: React for a responsive and intuitive user interface
+- **Backend**: Python Flask
+- **Frontend**: React
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js or Python environment (depending on final backend choice)
-- React installed on your machine
+- Python environment
+- Flask installed on your machine
 
 ### Installation
 1. Clone the repository:
